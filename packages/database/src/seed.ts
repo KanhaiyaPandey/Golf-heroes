@@ -8,7 +8,10 @@ async function main() {
   // Create admin user
   const admin = await prisma.user.upsert({
     where: { email: "admin@golfheroes.com" },
-    update: {},
+    update: {
+      hashedPassword:
+        "$2a$10$VMsRS3wpQQA3HoA.940kQuswjhx3W0O0OCuXCLSdBdnhLDo.AcUZi",
+    },
     create: {
       email: "admin@golfheroes.com",
       name: "Admin User",
@@ -16,14 +19,17 @@ async function main() {
       emailVerified: true,
       // password: "admin123" - hashed with bcrypt
       hashedPassword:
-        "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSNZ83wozu",
+        "$2a$10$VMsRS3wpQQA3HoA.940kQuswjhx3W0O0OCuXCLSdBdnhLDo.AcUZi",
     },
   });
 
   // Create test subscriber
   const subscriber = await prisma.user.upsert({
     where: { email: "player@golfheroes.com" },
-    update: {},
+    update: {
+      hashedPassword:
+        "$2a$10$ZkSdTxC8BSwSuPVkKBs2U.uK70Csy9N8YzNDYOtMkMzvRlbKExgfG",
+    },
     create: {
       email: "player@golfheroes.com",
       name: "John Golfer",
@@ -31,7 +37,7 @@ async function main() {
       emailVerified: true,
       // password: "player123"
       hashedPassword:
-        "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSNZ83wozu",
+        "$2a$10$ZkSdTxC8BSwSuPVkKBs2U.uK70Csy9N8YzNDYOtMkMzvRlbKExgfG",
     },
   });
 
@@ -157,7 +163,7 @@ async function main() {
     const dateOnly = new Date(
       playedAt.getFullYear(),
       playedAt.getMonth(),
-      playedAt.getDate()
+      playedAt.getDate(),
     );
 
     await prisma.golfScore.upsert({
