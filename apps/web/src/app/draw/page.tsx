@@ -6,6 +6,7 @@ import { formatCurrency, calculatePrizePool, formatDrawPeriod, getCurrentDrawPer
 import Link from "next/link";
 
 export const metadata = { title: "Monthly Draw" };
+export const dynamic = "force-dynamic";
 
 export default async function DrawPage() {
   const session = await getSession();

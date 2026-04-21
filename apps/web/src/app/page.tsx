@@ -10,6 +10,8 @@ import { CharityShowcase } from "@/components/home/charity-showcase";
 import { PrizePool } from "@/components/home/prize-pool";
 import { CTASection } from "@/components/home/cta-section";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const session = await getSession();
   const subscriberCount = await db.subscription.count({ where: { status: "ACTIVE" } });

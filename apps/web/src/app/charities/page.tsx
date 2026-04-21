@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/footer";
 import { CharitiesClient } from "@/components/charity/charities-client";
 
 export const metadata = { title: "Charities" };
+export const dynamic = "force-dynamic";
 
 export default async function CharitiesPage() {
   const [session, charities] = await Promise.all([
