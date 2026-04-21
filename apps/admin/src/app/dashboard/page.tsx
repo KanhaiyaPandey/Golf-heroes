@@ -3,6 +3,8 @@ import { requireAdmin } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { formatCurrency, calculatePrizePool, formatDrawPeriod, getCurrentDrawPeriod } from "@golf-heroes/shared";
 
+export const dynamic = "force-dynamic";
+
 async function getStats() {
   const [totalUsers, activeSubscribers, pendingWinners, recentDraws] = await Promise.all([
     db.user.count(),
@@ -27,6 +29,7 @@ export default async function AdminDashboard() {
   if (!session) redirect("/login");
 
   const { totalUsers, activeSubscribers, pendingWinners, recentDraws, pool, totalPaid } = await getStats();
+  const safeRecentDraws = Array.isArray(recentDraws) ? recentDraws : [];
   const { month, year } = getCurrentDrawPeriod();
 
   const statCards = [
@@ -75,7 +78,7 @@ export default async function AdminDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800/50">
-              {recentDraws.map((d) => (
+              {safeRecentDraws.map((d) => (
                 <tr key={d.id}>
                   <td className="py-3 text-white">{formatDrawPeriod(d.month, d.year)}</td>
                   <td className="py-3">
@@ -89,7 +92,7 @@ export default async function AdminDashboard() {
                   <td className="py-3 text-right text-zinc-300">{d._count.winnerRecords}</td>
                 </tr>
               ))}
-              {recentDraws.length === 0 && (
+              {safeRecentDraws.length === 0 && (
                 <tr><td colSpan={4} className="py-8 text-center text-zinc-500">No draws yet</td></tr>
               )}
             </tbody>
