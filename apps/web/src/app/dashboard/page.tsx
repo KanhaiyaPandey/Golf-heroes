@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@golf-heroes/database";
-import { formatCurrency, calculatePrizePool, formatDrawPeriod, getCurrentDrawPeriod } from "@golf-heroes/shared";
+import { calculatePrizePool, formatDrawPeriod, getCurrentDrawPeriod } from "@golf-heroes/shared";
 import { Navbar } from "@/components/layout/navbar";
 import { ScoreManager } from "@/components/dashboard/score-manager";
 import { SubscriptionCard } from "@/components/dashboard/subscription-card";

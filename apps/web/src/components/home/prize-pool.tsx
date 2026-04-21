@@ -47,7 +47,7 @@ export function PrizePool({ pool, subscriberCount }: PrizePoolProps) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mb-16 text-center">
           <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-emerald-400">
-            This month's draw
+            This month&apos;s draw
           </p>
           <h2 className="font-display text-4xl text-white sm:text-5xl">
             Prize pool breakdown

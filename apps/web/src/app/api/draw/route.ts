@@ -1,4 +1,3 @@
-import { NextRequest } from "next/server";
 import { db } from "@golf-heroes/database";
 import { requireAuth, requireActiveSubscription } from "@/lib/auth/session";
 import { createDrawEntry } from "@/lib/draw/engine";
@@ -33,7 +32,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
     const session = await requireAuth();
     await requireActiveSubscription(session.userId);

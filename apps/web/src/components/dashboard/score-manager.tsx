@@ -9,9 +9,8 @@ interface ScoreManagerProps {
   scores: GolfScore[];
 }
 
-export function ScoreManager({ scores: initialScores }: ScoreManagerProps) {
+export function ScoreManager({ scores }: ScoreManagerProps) {
   const router = useRouter();
-  const [scores, setScores] = useState(initialScores);
   const [adding, setAdding] = useState(false);
   const [newScore, setNewScore] = useState({ score: "", playedAt: "" });
   const [editingId, setEditingId] = useState<string | null>(null);

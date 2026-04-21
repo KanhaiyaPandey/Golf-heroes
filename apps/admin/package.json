@@ -7,7 +7,7 @@
     "prebuild": "npm -w @golf-heroes/database run db:generate",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

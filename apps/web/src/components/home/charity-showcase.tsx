@@ -22,7 +22,7 @@ export function CharityShowcase({ charities }: CharityShowcaseProps) {
               Featured charities
             </h2>
             <p className="mt-4 text-zinc-400 max-w-xl">
-              Choose a cause you're passionate about. At least 10% of your subscription goes directly to your chosen charity.
+              Choose a cause you&apos;re passionate about. At least 10% of your subscription goes directly to your chosen charity.
             </p>
           </div>
           <Link

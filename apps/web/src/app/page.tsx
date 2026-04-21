@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@golf-heroes/database";
-import { formatCurrency, calculatePrizePool } from "@golf-heroes/shared";
+import { calculatePrizePool } from "@golf-heroes/shared";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { HeroSection } from "@/components/home/hero-section";
