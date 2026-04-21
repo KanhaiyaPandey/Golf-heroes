@@ -1,7 +1,18 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "globalEnv": ["DATABASE_URL", "DIRECT_URL", "JWT_SECRET"],
+  "globalEnv": [
+    "DATABASE_URL",
+    "DIRECT_URL",
+    "JWT_SECRET",
+    "NEXT_PUBLIC_APP_URL",
+    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+    "STRIPE_MONTHLY_PRICE_ID",
+    "STRIPE_PUBLISHABLE_KEY",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "STRIPE_YEARLY_PRICE_ID"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

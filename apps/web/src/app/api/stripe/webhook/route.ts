@@ -1,9 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { db } from "@golf-heroes/database";
 import type Stripe from "stripe";
 
 export async function POST(req: NextRequest) {
+  let stripe: Stripe;
+  try {
+    stripe = getStripe();
+  } catch (err) {
+    console.error("Stripe is not configured:", err);
+    return NextResponse.json({ error: "Stripe not configured" }, { status: 500 });
+  }
+
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    console.error("Missing STRIPE_WEBHOOK_SECRET");
+    return NextResponse.json({ error: "Stripe not configured" }, { status: 500 });
+  }
+
   const body = await req.text();
   const sig = req.headers.get("stripe-signature");
 
@@ -14,7 +28,7 @@ export async function POST(req: NextRequest) {
     event = stripe.webhooks.constructEvent(
       body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET ?? ""
+      webhookSecret
     );
   } catch (err) {
     console.error("Webhook signature verification failed:", err);
@@ -25,27 +39,27 @@ export async function POST(req: NextRequest) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        await handleCheckoutCompleted(session);
+        await handleCheckoutCompleted(stripe, session);
         break;
       }
       case "invoice.payment_succeeded": {
         const invoice = event.data.object as Stripe.Invoice;
-        await handleInvoicePaymentSucceeded(invoice);
+        await handleInvoicePaymentSucceeded(stripe, invoice);
         break;
       }
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice;
-        await handleInvoicePaymentFailed(invoice);
+        await handleInvoicePaymentFailed(stripe, invoice);
         break;
       }
       case "customer.subscription.deleted": {
         const sub = event.data.object as Stripe.Subscription;
-        await handleSubscriptionDeleted(sub);
+        await handleSubscriptionDeleted(stripe, sub);
         break;
       }
       case "customer.subscription.updated": {
         const sub = event.data.object as Stripe.Subscription;
-        await handleSubscriptionUpdated(sub);
+        await handleSubscriptionUpdated(stripe, sub);
         break;
       }
     }
@@ -57,7 +71,10 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ received: true });
 }
 
-async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+async function handleCheckoutCompleted(
+  stripe: Stripe,
+  session: Stripe.Checkout.Session
+) {
   const userId = session.metadata?.userId;
   const plan = session.metadata?.plan as "MONTHLY" | "YEARLY";
   if (!userId || !plan) return;
@@ -93,7 +110,10 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   });
 }
 
-async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
+async function handleInvoicePaymentSucceeded(
+  stripe: Stripe,
+  invoice: Stripe.Invoice
+) {
   const subId = (invoice as { subscription?: string }).subscription;
   if (!subId) return;
   const stripeSub = await stripe.subscriptions.retrieve(subId);
@@ -108,7 +128,10 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   });
 }
 
-async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
+async function handleInvoicePaymentFailed(
+  stripe: Stripe,
+  invoice: Stripe.Invoice
+) {
   const subId = (invoice as { subscription?: string }).subscription;
   if (!subId) return;
   await db.subscription.updateMany({
@@ -117,14 +140,20 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   });
 }
 
-async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
+async function handleSubscriptionDeleted(
+  stripe: Stripe,
+  sub: Stripe.Subscription
+) {
   await db.subscription.updateMany({
     where: { stripeSubscriptionId: sub.id },
     data: { status: "CANCELLED" },
   });
 }
 
-async function handleSubscriptionUpdated(sub: Stripe.Subscription) {
+async function handleSubscriptionUpdated(
+  stripe: Stripe,
+  sub: Stripe.Subscription
+) {
   const status = sub.cancel_at_period_end ? "ACTIVE" : "ACTIVE";
   await db.subscription.updateMany({
     where: { stripeSubscriptionId: sub.id },
