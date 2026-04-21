@@ -1,5 +1,6 @@
 import { getSession } from "@/lib/auth/session";
 import { db } from "@golf-heroes/database";
+import type { Charity, CharityEvent } from "@golf-heroes/database";
 import { calculatePrizePool } from "@golf-heroes/shared";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
@@ -13,13 +14,23 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const session = await getSession();
-  const subscriberCount = await db.subscription.count({ where: { status: "ACTIVE" } });
-  const pool = calculatePrizePool(subscriberCount);
-  const featuredCharities = await db.charity.findMany({
-    where: { isFeatured: true, isActive: true },
-    take: 3,
-    include: { events: { take: 1, orderBy: { eventDate: "asc" } } },
-  });
+  let subscriberCount = 0;
+  let pool = calculatePrizePool(subscriberCount);
+  let featuredCharities: (Charity & { events: CharityEvent[] })[] = [];
+
+  try {
+    subscriberCount = await db.subscription.count({
+      where: { status: "ACTIVE" },
+    });
+    pool = calculatePrizePool(subscriberCount);
+    featuredCharities = await db.charity.findMany({
+      where: { isFeatured: true, isActive: true },
+      take: 3,
+      include: { events: { take: 1, orderBy: { eventDate: "asc" } } },
+    });
+  } catch (err) {
+    console.error("Home page data load failed:", err);
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950">
