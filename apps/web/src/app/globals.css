@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-display: "DM Serif Display", serif;
+    --font-body: "DM Sans", sans-serif;
+    --font-mono: "DM Mono", monospace;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-body);
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #fcd34d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .glow-emerald {
+    box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.4);
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 40px -10px rgba(245, 158, 11, 0.4);
+  }
+
+  .card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+  }
+}
+
+/* Animated gradient background */
+.animated-bg {
+  background: radial-gradient(ellipse 80% 80% at 50% -20%, rgba(16,185,129,0.15), transparent),
+              radial-gradient(ellipse 60% 60% at 80% 50%, rgba(6,78,59,0.1), transparent),
+              #09090b;
+}
+
+/* Number ball styles */
+.draw-ball {
+  @apply inline-flex items-center justify-center w-12 h-12 rounded-full font-mono font-bold text-lg;
+  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.15), transparent);
+}
+
+.draw-ball-match {
+  @apply bg-emerald-500 text-white;
+  box-shadow: 0 0 20px rgba(16,185,129,0.5);
+}
+
+.draw-ball-no-match {
+  @apply bg-zinc-800 text-zinc-400;
+}
+
+/* Score entry animation */
+@keyframes scoreAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.score-appear {
+  animation: scoreAppear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Pulse rings for hero */
+@keyframes ringPulse {
+  0% { opacity: 0.6; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.4); }
+}
+
+.ring-pulse {
+  animation: ringPulse 2.5s ease-out infinite;
+}
+
+.ring-pulse-delay {
+  animation: ringPulse 2.5s ease-out 1.25s infinite;
+}
