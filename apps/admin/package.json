@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3001",
+    "prebuild": "npm -w @golf-heroes/database run db:generate",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
