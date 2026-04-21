@@ -10,14 +10,13 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ email: "", password: "" });
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function signIn(payload: { email: string; password: string }) {
     setLoading(true);
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
 
@@ -33,6 +32,17 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    await signIn(form);
+  }
+
+  async function handleGuestSignIn() {
+    const guest = { email: "player@golfheroes.com", password: "player123" };
+    setForm(guest);
+    await signIn(guest);
   }
 
   return (
@@ -88,6 +98,15 @@ export default function LoginPage() {
               className="w-full h-11 rounded-xl bg-emerald-500 text-sm font-semibold text-white hover:bg-emerald-600 transition-colors disabled:opacity-50 shadow-lg shadow-emerald-500/20"
             >
               {loading ? "Signing in…" : "Sign in"}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleGuestSignIn}
+              disabled={loading}
+              className="w-full h-11 rounded-xl border border-zinc-700 bg-zinc-800/60 text-sm font-semibold text-zinc-200 hover:bg-zinc-800 transition-colors disabled:opacity-50"
+            >
+              {loading ? "Signing in…" : "Sign in as guest"}
             </button>
           </form>
 
