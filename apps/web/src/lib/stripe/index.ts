@@ -2,6 +2,16 @@ import Stripe from "stripe";
 
 let stripeClient: Stripe | null = null;
 
+function ensureAbsoluteUrl(url: string, name: string): string {
+  try {
+    return new URL(url).toString();
+  } catch {
+    throw new Error(
+      `Invalid ${name}: must be an absolute URL including scheme (e.g. https://...). Received: ${url}`
+    );
+  }
+}
+
 export function getStripe(): Stripe {
   if (stripeClient) return stripeClient;
 
@@ -51,8 +61,8 @@ export async function createCheckoutSession({
     mode: "subscription",
     customer_email: email,
     line_items: [{ price: selectedPlan.priceId, quantity: 1 }],
-    success_url: successUrl,
-    cancel_url: cancelUrl,
+    success_url: ensureAbsoluteUrl(successUrl, "successUrl"),
+    cancel_url: ensureAbsoluteUrl(cancelUrl, "cancelUrl"),
     metadata: { userId, plan },
     subscription_data: {
       metadata: { userId, plan },
@@ -69,7 +79,7 @@ export async function createBillingPortalSession(
   const stripe = getStripe();
   const session = await stripe.billingPortal.sessions.create({
     customer: customerId,
-    return_url: returnUrl,
+    return_url: ensureAbsoluteUrl(returnUrl, "returnUrl"),
   });
   return session.url;
 }

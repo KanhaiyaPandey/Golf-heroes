@@ -27,12 +27,28 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { plan } = CheckoutSchema.parse(body);
 
+    const origin = (() => {
+      const envUrl = process.env.NEXT_PUBLIC_APP_URL;
+      if (envUrl) {
+        try {
+          return new URL(envUrl).origin;
+        } catch {
+          try {
+            return new URL(`https://${envUrl}`).origin;
+          } catch {
+            // Fall through to request origin.
+          }
+        }
+      }
+      return req.nextUrl.origin;
+    })();
+
     const url = await createCheckoutSession({
       userId: session.userId,
       email: session.email,
       plan,
-      successUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?subscribed=true`,
-      cancelUrl: `${process.env.NEXT_PUBLIC_APP_URL}/subscribe`,
+      successUrl: new URL("/dashboard?subscribed=true", origin).toString(),
+      cancelUrl: new URL("/subscribe", origin).toString(),
     });
 
     return ok({ url });
